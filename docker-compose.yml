@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres121
+    environment:
+      POSTGRES_DB: hr_task_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "8007:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: backend-task
+    ports:
+      - "3091:3091"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: frontend-task
+    ports:
+      - "7008:80"
+    depends_on:
+      - backend
+
+  hr:
+    build:
+      context: ./HR
+      dockerfile: Dockerfile
+    container_name: hr-task
+    ports:
+      - "7009:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+
